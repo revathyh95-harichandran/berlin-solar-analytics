@@ -310,9 +310,19 @@ type a CSV reader would infer differently from the warehouse.
 
 **Use the Parquet files in Power BI or Tableau.** They carry a real schema, so
 types load correctly with no manual configuration. The CSVs are provided for
-interchange; because CSV has no type system, `postal_code` re-infers as an
-integer and must be set to text on import. `exports/_schema.json` documents the
-intended type for every column, plus the join keys and grain.
+interchange; because CSV has no type system, two hazards apply on import:
+
+- **`postal_code` re-infers as an integer** and must be set to text, or leading
+  zeros are lost.
+- **`capacity_kw` is corrupted by a German-locale import.** Under de-DE, `.` is
+  a thousands separator, so `11.96` loads as `1196` and `4.225` as `4225`.
+  Because the inflation depends on decimal places (×10, ×100 or ×1000), totals
+  are not merely rescaled but differentially distorted — the whole column reads
+  138.67× high. Set the column type with locale **English (United States)**, or
+  simply load the Parquet file, where the value is already a typed `DOUBLE`.
+
+`exports/_schema.json` documents the intended type for every column, plus the
+join keys and grain.
 
 ### 6. Query the star schema
 
