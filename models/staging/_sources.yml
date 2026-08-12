@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: mastr
+    description: >
+      Raw Marktstammdatenregister (MaStR) solar export, landed by
+      load_raw_data.py. One row per registered generating unit.
+    schema: raw
+    tables:
+      - name: raw_solar_installations
+        description: Berlin solar units, 1:1 with the source export.
+        columns:
+          - name: installation_id
+            description: MaStR unit number (SEE...). Natural key.
+          - name: state
+            description: Bundesland. Constant 'Berlin' in this extract.
+          - name: city
+            description: Ort.
+          - name: postal_code
+            description: Postleitzahl, zero-padded to 5 characters.
+          - name: capacity_kw
+            description: Bruttoleistung (gross capacity) in kW.
+          - name: install_date
+            description: Inbetriebnahmedatum. May be future-dated for planned units.
+          - name: status
+            description: Betriebs-Status. Constant 'In Betrieb' in this extract.

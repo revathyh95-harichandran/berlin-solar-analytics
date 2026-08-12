@@ -1,0 +1,8 @@
+solar_transformations:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ./solar_berlin.duckdb
+      schema: main
+      threads: 4

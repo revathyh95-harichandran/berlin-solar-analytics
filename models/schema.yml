@@ -1,0 +1,200 @@
+version: 2
+
+models:
+
+  # ------------------------------------------------------------------
+  # Staging
+  # ------------------------------------------------------------------
+
+  - name: stg_solar_installations
+    description: >
+      Cleaned, one-row-per-unit staging layer over the raw MaStR export.
+      Trims and standardises text, coalesces missing geography to an explicit
+      'Unknown' member so downstream dimension joins never drop facts, and
+      keeps only units that are actually in operation.
+    columns:
+      - name: installation_id
+        description: MaStR unit number (SEE...). Primary key of the staging grain.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: state
+        description: Bundesland. Constant 'Berlin' in this extract.
+        data_tests:
+          - not_null
+
+      - name: city
+        description: Ort. Constant 'Berlin' in this extract.
+        data_tests:
+          - not_null
+
+      - name: postal_code
+        description: Postleitzahl, zero-padded to 5 characters.
+        data_tests:
+          - not_null
+
+      - name: capacity_kw
+        description: >
+          Gross installed capacity (Bruttoleistung) in kW. Spans balcony units
+          through utility scale, so segment before averaging.
+        data_tests:
+          - not_null
+          - non_negative
+
+      - name: install_date
+        description: >
+          Commissioning date (Inbetriebnahmedatum). May be future-dated for
+          units with a registered or planned commissioning date.
+        data_tests:
+          - not_null
+
+      - name: status
+        description: Operating status. Filtered to 'In Betrieb' in this model.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['In Betrieb']
+
+  # ------------------------------------------------------------------
+  # Marts - dimensions
+  # ------------------------------------------------------------------
+
+  - name: dim_geography
+    description: >
+      Geography dimension, one row per distinct city / state / postal_code.
+      Surrogate key is an md5 hash of the natural key, so it stays stable
+      across full refreshes.
+    columns:
+      - name: geo_id
+        description: Surrogate key. md5(city|state|postal_code).
+        data_tests:
+          - unique
+          - not_null
+
+      - name: city
+        description: Ort.
+        data_tests:
+          - not_null
+
+      - name: state
+        description: Bundesland.
+        data_tests:
+          - not_null
+
+      - name: postal_code
+        description: Postleitzahl, zero-padded to 5 characters.
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_date
+    description: >
+      Date dimension derived from the commissioning dates present in the
+      facts. Sparse by construction: dates with no installations have no row,
+      so this does not serve as a continuous date spine.
+    columns:
+      - name: install_date
+        description: Commissioning date. Primary key of the dimension.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: year
+        description: Calendar year.
+        data_tests:
+          - not_null
+
+      - name: quarter
+        description: Calendar quarter, 1-4.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4]
+                quote: false
+
+      - name: month
+        description: Calendar month, 1-12.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                quote: false
+
+      - name: month_name
+        description: Full English month name, e.g. 'September'.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - 'January'
+                  - 'February'
+                  - 'March'
+                  - 'April'
+                  - 'May'
+                  - 'June'
+                  - 'July'
+                  - 'August'
+                  - 'September'
+                  - 'October'
+                  - 'November'
+                  - 'December'
+
+      - name: day_of_month
+        description: Day of month, 1-31.
+        data_tests:
+          - not_null
+
+      - name: year_quarter
+        description: Sortable year + quarter label, e.g. '2024-Q3'.
+        data_tests:
+          - not_null
+
+      - name: year_month
+        description: Sortable year + month label, e.g. '2024-07'.
+        data_tests:
+          - not_null
+
+  # ------------------------------------------------------------------
+  # Marts - fact
+  # ------------------------------------------------------------------
+
+  - name: fct_installations
+    description: >
+      Installation fact table. Grain is one row per solar unit. Carries
+      foreign keys out to dim_geography and dim_date plus the additive
+      capacity measure.
+    columns:
+      - name: installation_id
+        description: MaStR unit number. Degenerate dimension and primary key.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: geo_id
+        description: Foreign key to dim_geography.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_geography')
+                field: geo_id
+
+      - name: install_date
+        description: Foreign key to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: install_date
+
+      - name: capacity_kw
+        description: Gross installed capacity in kW. Additive measure.
+        data_tests:
+          - not_null
+          - non_negative

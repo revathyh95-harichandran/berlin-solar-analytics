@@ -1,0 +1,23 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Secrets and local configuration
+.env
+
+# DuckDB warehouse files (rebuildable from the raw export)
+*.duckdb
+*.duckdb.wal
+
+# dbt build artefacts
+target/
+logs/
+dbt_packages/
+.user.yml

@@ -1,0 +1,148 @@
+{
+  "database": "solar_berlin.duckdb",
+  "schema": "main",
+  "grain": "fct_installations: one row per solar unit",
+  "joins": [
+    "fct_installations.geo_id = dim_geography.geo_id",
+    "fct_installations.install_date = dim_date.install_date"
+  ],
+  "csv_conventions": {
+    "encoding": "UTF-8",
+    "delimiter": ",",
+    "quote": "\"",
+    "date_format": "YYYY-MM-DD",
+    "decimal_separator": ".",
+    "null_representation": "empty field"
+  },
+  "tables": [
+    {
+      "table": "dim_geography",
+      "source": "main.dim_geography",
+      "rows": 196,
+      "files": {
+        "csv": "dim_geography.csv",
+        "parquet": "dim_geography.parquet"
+      },
+      "columns": [
+        {
+          "name": "geo_id",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": true
+        },
+        {
+          "name": "city",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": false
+        },
+        {
+          "name": "state",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": false
+        },
+        {
+          "name": "postal_code",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": true
+        }
+      ]
+    },
+    {
+      "table": "dim_date",
+      "source": "main.dim_date",
+      "rows": 4729,
+      "files": {
+        "csv": "dim_date.csv",
+        "parquet": "dim_date.parquet"
+      },
+      "columns": [
+        {
+          "name": "install_date",
+          "duckdb_type": "DATE",
+          "bi_type": "date",
+          "force_text_on_import": false
+        },
+        {
+          "name": "year",
+          "duckdb_type": "INTEGER",
+          "bi_type": "whole number",
+          "force_text_on_import": false
+        },
+        {
+          "name": "quarter",
+          "duckdb_type": "INTEGER",
+          "bi_type": "whole number",
+          "force_text_on_import": false
+        },
+        {
+          "name": "month",
+          "duckdb_type": "INTEGER",
+          "bi_type": "whole number",
+          "force_text_on_import": false
+        },
+        {
+          "name": "month_name",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": false
+        },
+        {
+          "name": "day_of_month",
+          "duckdb_type": "INTEGER",
+          "bi_type": "whole number",
+          "force_text_on_import": false
+        },
+        {
+          "name": "year_quarter",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": false
+        },
+        {
+          "name": "year_month",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": false
+        }
+      ]
+    },
+    {
+      "table": "fct_installations",
+      "source": "main.fct_installations",
+      "rows": 25000,
+      "files": {
+        "csv": "fct_installations.csv",
+        "parquet": "fct_installations.parquet"
+      },
+      "columns": [
+        {
+          "name": "installation_id",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": true
+        },
+        {
+          "name": "geo_id",
+          "duckdb_type": "VARCHAR",
+          "bi_type": "text",
+          "force_text_on_import": true
+        },
+        {
+          "name": "install_date",
+          "duckdb_type": "DATE",
+          "bi_type": "date",
+          "force_text_on_import": false
+        },
+        {
+          "name": "capacity_kw",
+          "duckdb_type": "DOUBLE",
+          "bi_type": "decimal",
+          "force_text_on_import": false
+        }
+      ]
+    }
+  ]
+}
