@@ -362,7 +362,6 @@ berlin-solar-dataset/
 ├── macros/
 │   └── non_negative.sql        # Custom generic test: numeric range check
 ├── exports/                    # BI-ready outputs (CSV + Parquet + _schema.json)
-├── CLAUDE.md                   # Engineering context & dataset gotchas
 └── README.md
 ```
 
