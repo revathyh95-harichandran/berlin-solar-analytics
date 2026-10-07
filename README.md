@@ -264,7 +264,10 @@ against all 25,000 rows rather than assumed:
 
 ### Prerequisites
 
-Python 3.9+ and the raw MaStR export in the project root.
+Python 3.14 (the project was built with Python 3.14.7) and the raw MaStR
+export in the project root (`raw_master_solar.csv.xlsx`, included in this
+repository). `requirements.txt` pins the exact library versions used; with
+them, dbt parses the whole project without errors.
 
 ### 1. Install dependencies
 
@@ -344,7 +347,7 @@ python -c "import duckdb; print(duckdb.connect('solar_berlin.duckdb').execute(''
 ## Project Structure
 
 ```
-berlin-solar-dataset/
+berlin-solar-analytics/
 ├── load_raw_data.py            # Extract & Load: MaStR export -> DuckDB raw schema
 ├── export_for_bi.py            # Export star schema -> exports/ as CSV + Parquet
 ├── requirements.txt
@@ -362,6 +365,7 @@ berlin-solar-dataset/
 ├── macros/
 │   └── non_negative.sql        # Custom generic test: numeric range check
 ├── exports/                    # BI-ready outputs (CSV + Parquet + _schema.json)
+├── LICENSE                     # MIT License (code and documentation)
 └── README.md
 ```
 
@@ -405,3 +409,24 @@ Stated explicitly rather than left for a reader to discover:
 [Marktstammdatenregister](https://www.marktstammdatenregister.de/MaStR) —
 the German Federal Network Agency (Bundesnetzagentur) registry of electricity
 and gas generating units. Publicly available.
+
+**Source note (as the data license requires):**
+- **Provider:** Bundesnetzagentur, Marktstammdatenregister (MaStR).
+- **License:** [Datenlizenz Deutschland – Namensnennung – Version 2.0
+  (dl-de/by-2-0)](https://www.govdata.de/dl-de/by-2-0), as stated on the
+  register's [data download page](https://www.marktstammdatenregister.de/MaStR/Datendownload).
+  It allows commercial and non-commercial use, sharing and changes, as
+  long as the source is credited.
+- **Dataset:** public unit data of the Marktstammdatenregister,
+  https://www.marktstammdatenregister.de/MaStR
+- **Changes:** the data was changed. The pipeline reads the MaStR extract
+  (`raw_master_solar.csv.xlsx`), then cleans, renames and reshapes it into
+  the dimensional model; the files in `exports/` are derived from it.
+
+---
+
+## License
+
+The code and documentation in this repository are released under the MIT
+License, see [LICENSE](LICENSE). The data is not covered by the MIT
+License; it is used under its own license (see Data Source above).
