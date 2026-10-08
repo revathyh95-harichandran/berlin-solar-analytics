@@ -371,6 +371,7 @@ berlin-solar-analytics/
 ├── POWER BI DASHBOARD.pbix     # Power BI dashboard on the exported star schema
 ├── raw_master_solar.csv.xlsx   # Raw MaStR extract (see Data Source)
 ├── LICENSE                     # MIT License (code and documentation)
+├── AI_USAGE.md                 # How an AI assistant was used in this project
 └── README.md
 ```
 
@@ -435,3 +436,17 @@ and gas generating units. Publicly available.
 The code and documentation in this repository are released under the MIT
 License, see [LICENSE](LICENSE). The data is not covered by the MIT
 License; it is used under its own license (see Data Source above).
+
+---
+
+## AI Usage Declaration
+
+I used **Claude Code** (an AI assistant made by Anthropic) as an assistant in this
+project. The project idea, the choice of the Marktstammdatenregister (MaStR) data, the
+pipeline design and all final decisions are my own, and I built the Power BI dashboard
+myself. I wrote every prompt, reviewed every output, and checked the results before
+accepting them. The tool mainly helped with writing the pipeline code, drafting
+documentation, and handling routine tasks. That gave me more time to explore the data,
+question the results, and work on the dashboard. Where the tool suggested an approach, I
+evaluated it and decided whether to use it. A full breakdown is in
+[AI_USAGE.md](AI_USAGE.md).
