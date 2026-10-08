@@ -117,11 +117,12 @@ balcony-solar adoption rather than commercial projects.
 | Transformation | **dbt-core** + **dbt-duckdb** | Modelling, dependency graph, testing, documentation |
 | Language | **SQL** (DuckDB dialect), **Jinja** | Model logic and templating |
 | Configuration | python-dotenv | Environment-driven paths and schema names |
-| Consumption | **Power BI / Tableau** | Target BI layer — the star schema is shaped for direct connection |
+| Consumption | **Power BI** | Dashboard built on the exported star schema (`exports/`) |
 
 > **Scope note:** the pipeline and dimensional model are complete and tested.
-> No BI dashboard is included in this repository; the star schema is the
-> deliverable that a BI tool connects to.
+> The Power BI dashboard (`POWER BI DASHBOARD.pbix`, previewed at the top of
+> this README) is included and reads the exported star schema; any other BI
+> tool can connect to the same exports.
 
 ---
 
@@ -365,6 +366,10 @@ berlin-solar-analytics/
 ├── macros/
 │   └── non_negative.sql        # Custom generic test: numeric range check
 ├── exports/                    # BI-ready outputs (CSV + Parquet + _schema.json)
+├── assets/
+│   └── dashboard_preview.png   # Screenshot of the Power BI dashboard
+├── POWER BI DASHBOARD.pbix     # Power BI dashboard on the exported star schema
+├── raw_master_solar.csv.xlsx   # Raw MaStR extract (see Data Source)
 ├── LICENSE                     # MIT License (code and documentation)
 └── README.md
 ```
